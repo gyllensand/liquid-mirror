@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { a, useSpring } from "@react-spring/three";
 import { Color, DoubleSide, ShaderMaterial } from "three";
 import { start } from "tone";
-import { Sample, SAMPLERS } from "./App";
+import { Sample, CHORDS, PLUCKS } from "./App";
 import { fragmentShader, vertexShader } from "./shader";
 import { useGesture } from "react-use-gesture";
 
@@ -15,11 +15,13 @@ const pickRandom = (array: any[]) =>
 
 export const PITCH = ["8.5", "10"];
 
-export const PATTERN = [40.0, 60.0, 80.0];
+export const PATTERN = [0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0];
 
-export const BLUR = [0.0, 0.2];
+export const SCALE = [1.5, 2];
 
-export const TIME = [20, 30];
+export const BLUR = [0.0, 0.2, 0.4];
+
+export const TIME = [200, 100];
 
 export const COLORS = [
   // dark
@@ -48,6 +50,7 @@ export const COLORS = [
 
 const pitch = pickRandom(PITCH);
 const pattern = pickRandom(PATTERN);
+const scale = pickRandom(SCALE);
 const blur = pickRandom(BLUR);
 const time = pickRandom(TIME);
 const theme = sortRandom(COLORS);
@@ -58,7 +61,7 @@ const lineColor2 = new Color(pickRandom(theme[1]));
 
 const NoiseMaterial = shaderMaterial(
   {
-    scale: 1.5,
+    scale,
     size: 0.2,
     density: 4.0,
     time: 0.0,
@@ -81,11 +84,10 @@ const Scene = () => {
   const material = useRef<ShaderMaterial>(null);
   const [toneInitialized, setToneInitialized] = useState(false);
   const [lastPlayedSample, setLastPlayedSample] = useState<Sample>();
-  const availableSamplers = useMemo(
+  const plucks = useMemo(() => PLUCKS.map((pluck) => pluck), []);
+  const availableChords = useMemo(
     () =>
-      SAMPLERS.filter(
-        ({ sampler, index }) => index !== lastPlayedSample?.index
-      ),
+      CHORDS.filter(({ sampler, index }) => index !== lastPlayedSample?.index),
     [lastPlayedSample]
   );
 
@@ -97,20 +99,30 @@ const Scene = () => {
   const [spring, setSpring] = useSpring(() => ({
     scale: [1, 1, 1],
     rotation: [0, 0, 0],
-    config: { friction: 20 },
+    time: 0,
   })) as any;
 
   useEffect(() => {
-    SAMPLERS.forEach(({ sampler }) => sampler.toDestination());
+    console.log(
+      "%c * Computer Emotions * ",
+      "color: #d80fe7; font-size: 16px; background-color: black;"
+    );
+    CHORDS.forEach(({ sampler }) => sampler.toDestination());
+    PLUCKS.forEach(({ sampler }) => sampler.toDestination());
   }, []);
 
   useEffect(() => {
-    lastPlayedSample?.sampler.triggerAttack(pitch);
-  }, [lastPlayedSample]);
+    if (lastPlayedSample) {
+      lastPlayedSample.sampler.triggerAttack(pitch);
+
+      plucks[lastPlayedSample.index].sampler.volume.set({ value: -3 });
+      plucks[lastPlayedSample.index].sampler.triggerAttack(pitch);
+    }
+  }, [lastPlayedSample, plucks]);
 
   useFrame(({ clock }) => {
     material.current!.uniforms.time.value = Math.sin(
-      (2 * Math.PI * clock.getElapsedTime()) / time
+      (2 * Math.PI * clock.getElapsedTime() + spring.time.get()) / time
     );
   });
 
@@ -124,9 +136,9 @@ const Scene = () => {
       await initializeTone();
     }
 
-    const currentSampler = pickRandom(availableSamplers);
-    setLastPlayedSample(currentSampler)
-  }, [initializeTone, toneInitialized, availableSamplers]);
+    const currentSampler = pickRandom(availableChords);
+    setLastPlayedSample(currentSampler);
+  }, [initializeTone, toneInitialized, availableChords]);
 
   const bind = useGesture({
     onPointerDown: () => {
@@ -134,7 +146,7 @@ const Scene = () => {
         return;
       }
 
-      setSpring.start({ scale: [0.9, 0.9, 0.9] });
+      setSpring.start({ scale: [0.9, 0.9, 0.9], config: { friction: 20 } });
     },
     onPointerUp: () => {
       if (spring.rotation.isAnimating) {
@@ -145,6 +157,8 @@ const Scene = () => {
       setSpring.start({
         scale: [1, 1, 1],
         rotation: [0, 0, spring.rotation.get()[2] - Math.PI / 2],
+        time: spring.time.get() + 250,
+        config: { friction: 17, mass: 1 },
       });
     },
   });

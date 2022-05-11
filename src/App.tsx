@@ -5,11 +5,11 @@ import { Vector3 } from "three";
 import { Sampler } from "tone";
 
 export interface Sample {
-  index: number
-  sampler: Sampler
+  index: number;
+  sampler: Sampler;
 }
 
-export const SAMPLERS: Sample[] = [
+export const CHORDS: Sample[] = [
   {
     index: 0,
     sampler: new Sampler({
@@ -17,7 +17,7 @@ export const SAMPLERS: Sample[] = [
         1: "chord_1.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
   },
   {
     index: 1,
@@ -26,7 +26,7 @@ export const SAMPLERS: Sample[] = [
         1: "chord_2.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
   },
   {
     index: 2,
@@ -35,7 +35,7 @@ export const SAMPLERS: Sample[] = [
         1: "chord_3.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
   },
   {
     index: 3,
@@ -44,7 +44,7 @@ export const SAMPLERS: Sample[] = [
         1: "chord_4.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
   },
   {
     index: 4,
@@ -53,7 +53,7 @@ export const SAMPLERS: Sample[] = [
         1: "chord_5.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
   },
   {
     index: 5,
@@ -62,7 +62,7 @@ export const SAMPLERS: Sample[] = [
         1: "chord_6.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
   },
   {
     index: 6,
@@ -71,7 +71,7 @@ export const SAMPLERS: Sample[] = [
         1: "chord_7.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
   },
   {
     index: 7,
@@ -80,7 +80,82 @@ export const SAMPLERS: Sample[] = [
         1: "chord_8.mp3",
       },
       baseUrl: "/audio/",
-    })
+    }),
+  },
+];
+
+export const PLUCKS: Sample[] = [
+  {
+    index: 0,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_1.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
+  },
+  {
+    index: 1,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_2.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
+  },
+  {
+    index: 2,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_3.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
+  },
+  {
+    index: 3,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_4.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
+  },
+  {
+    index: 4,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_5.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
+  },
+  {
+    index: 5,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_6.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
+  },
+  {
+    index: 6,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_7.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
+  },
+  {
+    index: 7,
+    sampler: new Sampler({
+      urls: {
+        1: "pluck_8.mp3",
+      },
+      baseUrl: "/audio/",
+    }),
   },
 ];
 
