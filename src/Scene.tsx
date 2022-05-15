@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { a, useSpring } from "@react-spring/three";
 import { Color, DoubleSide, ShaderMaterial } from "three";
 import { start } from "tone";
-import { Sample, CHORDS, PLUCKS } from "./App";
+import { Sample, CHORDS } from "./App";
 import { fragmentShader, vertexShader } from "./shader";
 import { useGesture } from "react-use-gesture";
 
@@ -84,7 +84,7 @@ const Scene = () => {
   const material = useRef<ShaderMaterial>(null);
   const [toneInitialized, setToneInitialized] = useState(false);
   const [lastPlayedSample, setLastPlayedSample] = useState<Sample>();
-  const plucks = useMemo(() => PLUCKS.map((pluck) => pluck), []);
+
   const availableChords = useMemo(
     () =>
       CHORDS.filter(({ sampler, index }) => index !== lastPlayedSample?.index),
@@ -96,33 +96,36 @@ const Scene = () => {
     [viewport.aspect]
   );
 
-  const [spring, setSpring] = useSpring(() => ({
+  const [{ scale }, setScale] = useSpring(() => ({
     scale: [1, 1, 1],
+  }));
+
+  const [{ rotation }, setRotation] = useSpring(() => ({
     rotation: [0, 0, 0],
-    time: 0,
-  })) as any;
+  }));
+
+  const [{ animTime }, setAnimTime] = useSpring(() => ({
+    animTime: 0,
+  }));
 
   useEffect(() => {
     console.log(
       "%c * Computer Emotions * ",
-      "color: #d80fe7; font-size: 16px; background-color: black;"
+      "color: #d80fe7; font-size: 16px; background-color: #000000;"
     );
+
     CHORDS.forEach(({ sampler }) => sampler.toDestination());
-    PLUCKS.forEach(({ sampler }) => sampler.toDestination());
   }, []);
 
   useEffect(() => {
     if (lastPlayedSample) {
       lastPlayedSample.sampler.triggerAttack(pitch);
-
-      plucks[lastPlayedSample.index].sampler.volume.set({ value: -3 });
-      plucks[lastPlayedSample.index].sampler.triggerAttack(pitch);
     }
-  }, [lastPlayedSample, plucks]);
+  }, [lastPlayedSample]);
 
   useFrame(({ clock }) => {
     material.current!.uniforms.time.value = Math.sin(
-      (2 * Math.PI * clock.getElapsedTime() + spring.time.get()) / time
+      (2 * Math.PI * clock.getElapsedTime() + animTime.get()) / time
     );
   });
 
@@ -142,22 +145,30 @@ const Scene = () => {
 
   const bind = useGesture({
     onPointerDown: () => {
-      if (spring.rotation.isAnimating) {
+      if (rotation.isAnimating) {
         return;
       }
 
-      setSpring.start({ scale: [0.9, 0.9, 0.9], config: { friction: 20 } });
+      setScale.start({ scale: [0.9, 0.9, 0.9], config: { friction: 20 } });
     },
     onPointerUp: () => {
-      if (spring.rotation.isAnimating) {
+      if (rotation.isAnimating) {
         return;
       }
 
       onClick();
-      setSpring.start({
+      setScale.start({
         scale: [1, 1, 1],
-        rotation: [0, 0, spring.rotation.get()[2] - Math.PI / 2],
-        time: spring.time.get() + 250,
+        config: { friction: 17, mass: 1 },
+      });
+
+      setRotation.start({
+        rotation: [0, 0, rotation.get()[2] - Math.PI / 2],
+        config: { friction: 17, mass: 1 },
+      });
+
+      setAnimTime.start({
+        animTime: animTime.get() + 250,
         config: { friction: 17, mass: 1 },
       });
     },
@@ -167,9 +178,12 @@ const Scene = () => {
     <>
       <color attach="background" args={[bgColor]} />
       <OrbitControls enabled={false} />
+      {/*
+        // @ts-ignore */}
       <AnimatedPlane
         {...bind()}
-        {...spring}
+        scale={scale as any}
+        rotation={rotation as any}
         args={[getPlaneSize(14), getPlaneSize(14)]}
       >
         {/*
