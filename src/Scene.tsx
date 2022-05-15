@@ -8,10 +8,17 @@ import { Sample, CHORDS } from "./App";
 import { fragmentShader, vertexShader } from "./shader";
 import { useGesture } from "react-use-gesture";
 
+declare const fxrand: () => number;
+
 const sortRandom = (array: any[]) => array.sort((a, b) => 0.5 - Math.random());
 
 const pickRandom = (array: any[]) =>
   array[Math.floor(Math.random() * array.length)];
+
+const sortRandomHash = (array: any[]) => array.sort((a, b) => 0.5 - fxrand());
+
+const pickRandomHash = (array: any[]) =>
+  array[Math.floor(fxrand() * array.length)];
 
 export const PITCH = ["8.5", "10"];
 
@@ -48,16 +55,29 @@ export const COLORS = [
   ],
 ];
 
-const pitch = pickRandom(PITCH);
-const pattern = pickRandom(PATTERN);
-const scale = pickRandom(SCALE);
-const blur = pickRandom(BLUR);
-const time = pickRandom(TIME);
-const theme = sortRandom(COLORS);
+const pitch = pickRandomHash(PITCH);
+const pattern = pickRandomHash(PATTERN);
+const scale = pickRandomHash(SCALE);
+const blur = pickRandomHash(BLUR);
+const time = pickRandomHash(TIME);
+const theme = sortRandomHash(COLORS);
 
-const bgColor = new Color(pickRandom(theme[0]));
-const lineColor1 = new Color(pickRandom(theme[1]));
-const lineColor2 = new Color(pickRandom(theme[1]));
+const bgColor = new Color(pickRandomHash(theme[0]));
+const lineColor1 = new Color(pickRandomHash(theme[1]));
+const lineColor2 = new Color(pickRandomHash(theme[1]));
+
+// @ts-ignore
+window.$fxhashFeatures = {
+  pitch,
+  pattern,
+  scale,
+  blur,
+  time,
+  theme,
+  bgColor,
+  lineColor1,
+  lineColor2
+};
 
 const NoiseMaterial = shaderMaterial(
   {
@@ -168,7 +188,7 @@ const Scene = () => {
       });
 
       setAnimTime.start({
-        animTime: animTime.get() + 250,
+        animTime: animTime.get() + 500,
         config: { friction: 17, mass: 1 },
       });
     },
