@@ -9,6 +9,8 @@ export interface Sample {
   sampler: Sampler;
 }
 
+const baseUrl = `${process.env.PUBLIC_URL}/audio/`;
+
 export const CHORDS: Sample[] = [
   {
     index: 0,
@@ -16,7 +18,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_1.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
   {
@@ -25,7 +27,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_2.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
   {
@@ -34,7 +36,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_3.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
   {
@@ -43,7 +45,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_4.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
   {
@@ -52,7 +54,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_5.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
   {
@@ -61,7 +63,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_6.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
   {
@@ -70,7 +72,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_7.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
   {
@@ -79,7 +81,7 @@ export const CHORDS: Sample[] = [
       urls: {
         1: "chord_8.mp3",
       },
-      baseUrl: "/audio/",
+      baseUrl,
     }),
   },
 ];

@@ -73,10 +73,9 @@ window.$fxhashFeatures = {
   scale,
   blur,
   time,
-  theme,
-  bgColor,
-  lineColor1,
-  lineColor2
+  bgColor: bgColor.getHexString(),
+  lineColor1: lineColor1.getHexString(),
+  lineColor2: lineColor2.getHexString()
 };
 
 const NoiseMaterial = shaderMaterial(

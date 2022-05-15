@@ -2,6 +2,7 @@
   "name": "liquid-mirror",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@react-three/cannon": "^6.1.0",
     "@react-three/drei": "^8.18.3",
